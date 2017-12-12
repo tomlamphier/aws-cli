@@ -1,0 +1,28 @@
+# ping - Test connectivity to AWS Account
+#        preconditions:  AWS CLI is installed locally and configured
+#                        $AWS_CLI_WORK_DIR points to a writable work directory
+#                        $AWS_CLI_PROJECT_NAME is your current project
+#
+#
+# Verify required parameters
+if [ ! -d "$AWS_CLI_WORK_DIR" ]
+    then echo "Cannot find  directory $AWS_CLI_WORK_DIR"
+    exit 1
+fi
+if [ ! -w "$AWS_CLI_WORK_DIR" ]
+    then echo "Cannot write to directory $AWS_CLI_WORK_DIR"
+    exit 1
+fi
+if [ -z "$AWS_CLI_PROJECT_NAME" ]
+    then echo "Please set AWS_CLI_PROJECT_NAME to a project"
+    exit 1
+fi
+# Call AWS CLI service
+OUTPUT=`aws ec2 describe-regions 2>&1`
+if [ $? -eq 0 ]; then
+    echo "AWS CLI is OK"
+else
+    echo "AWS CLI call failed"
+    echo "Message:"
+    echo $OUTPUT
+fi
