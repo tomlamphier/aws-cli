@@ -17,3 +17,6 @@ Example:
 | --------------------------- |---------------------------------------------|
 | check-aws-cli-connection    | Test connectivity to your AWS account.      |
 | create-vpc                  | Create VPC for project.                     |
+| create-security-group       | Create security group.                      |
+| add-port-to-security-group  | Open incoming port in security group.       |
+
