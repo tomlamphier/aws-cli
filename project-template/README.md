@@ -6,9 +6,10 @@ The bash scripts in this directory can be used to build and launch a server in t
 * AWS_CLI_WORK_DIR     - work directory
 
 Example:
-
+```
    export AWS_CLI_PROJRCT_NAME=myproject
    export AWS_CLI_WORK_DIR=/home/tom/aws-work      
+```
 
 ## List of Scripts:
 
