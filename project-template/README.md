@@ -16,3 +16,4 @@ Example:
 | Script Name                 | Function                            |
 | --------------------------- |---------------------------------------------|
 | check-aws-cli-connection    | Test connectivity to your AWS account.      |
+| create-vpc                  | Create VPC for project.                     |
