@@ -10,7 +10,8 @@ Example:
    export AWS_CLI_PROJRCT_NAME=myproject
    export AWS_CLI_WORK_DIR=/home/tom/aws-work      
 
-##List of Scripts:
+## List of Scripts:
+
 | Script Name                 | Function                            |
 | --------------------------- |---------------------------------------------|
 | check-aws-cli-connection    | Test connectivity to your AWS account.      |
