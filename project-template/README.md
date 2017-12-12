@@ -3,7 +3,7 @@
 The bash scripts in this directory can be used to build and launch a server in the Amazon AWS cloud.  Before running them, set these environment vairables:
 
 * AWS_CLI_PROJECT_NAME - the name of your project
-* AWS_CLI_WORK_DIR     - work directory
+* AWS_CLI_WORK_DIR     - local work directory 
 
 Example:
 ```
