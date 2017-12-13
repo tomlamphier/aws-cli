@@ -1,22 +1,26 @@
-# ping - Test connectivity to AWS Account
-#        preconditions:  AWS CLI is installed locally and configured
-#                        $AWS_CLI_WORK_DIR points to a writable work directory
-#                        $AWS_CLI_PROJECT_NAME is your current project
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# 
+# check-aws-cli-connection - Test connectivity to AWS Account
+#        precondition:   AWS CLI is installed locally and configured
 #
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Note: Sometimes a connect request fails unexpectedly in a way
+#       that seems to be a timeout problem.  This could be due to your
+#       local computer clock being out of sync.  A simple correction is
 #
-# Verify required parameters
-if [ ! -d "$AWS_CLI_WORK_DIR" ]
-    then echo "Cannot find  directory $AWS_CLI_WORK_DIR"
-    exit 1
-fi
-if [ ! -w "$AWS_CLI_WORK_DIR" ]
-    then echo "Cannot write to directory $AWS_CLI_WORK_DIR"
-    exit 1
-fi
-if [ -z "$AWS_CLI_PROJECT_NAME" ]
-    then echo "Please set AWS_CLI_PROJECT_NAME to a project"
-    exit 1
-fi
+#       sudo ntupdate pool.ntp.org
+#
+#       You will need the ntp package installed for this command.
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+usage() { echo "Usage: check-aws-cli-connection"; }
+while getopts h opt; do
+    case $opt in
+        h) usage; exit;
+        ;;
+    esac
+done
+#
 # Call AWS CLI service
 OUTPUT=`aws ec2 describe-regions 2>&1`
 if [ $? -eq 0 ]; then

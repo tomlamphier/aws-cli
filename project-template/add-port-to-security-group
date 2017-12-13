@@ -1,0 +1,13 @@
+# add-port-to-security-group
+# Get port number from command line and open it for incoming requests
+# in security group
+if [ -z $1 ]; then
+  echo "Usage: add-port-to-security-group <port number>"
+  exit 1
+fi
+aws ec2 authorize-security-group-ingress \
+    --group-id `cat ${AWS_CLI_WORK_DIR}/sggroup.txt` \
+    --protocol tcp \
+    --port ${1} \
+    --cidr 0.0.0.0/0
+

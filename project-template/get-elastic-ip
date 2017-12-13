@@ -1,0 +1,8 @@
+# get a new elastic IP address
+aws ec2 allocate-address --domain vpc \
+    --query '[PublicIp, AllocationId]' \
+    --output text \
+    > ${AWS_CLI_WORK_DIR}/allocate-address.txt
+# query pulls two fields from output JSON, IP and allocation ID
+NEW_IP=`awk '{print $1}' ${AWS_CLI_WORK_DIR}/allocate-address.txt`
+echo "allocated new elastic IP address ${NEW_IP}"

@@ -1,0 +1,24 @@
+# create-keypair - create root access key pair for an AWS account
+#
+usage() { echo "Usage: create-keypair [-p project-name] [-w work-directory]";
+         echo "    project-name defaults to the env variable $AWS_CLI_PROJECT_NAME"; 
+         echo "    work-directory defaults to env variable $AWS_CLI_WORK_DIR"; }
+PROJECT=${AWS_CLI_PROJECT_NAME}
+WORK_DIR=${AWS_CLI_WORK_DIR}
+while getopts p:w:h opt; do
+    case $opt in
+        p) PROJECT=${OPTARG}
+        ;;
+        w) WORK_DIR=${OPTARG}
+        ;;
+        h) usage; exit;
+        ;;
+    esac
+done
+#
+aws ec2 create-key-pair --key-name ${PROJECT}-keypair \
+    --query 'KeyMaterial' \
+    --output text > ${WORK_DIR}/${PROJECT}-keypair.pem
+# restrict access to private key
+chmod 600 ${WORK_DIR}/${PROJECT}-keypair.pem
+echo "key pair created; private key downloaded to ${WORK_DIR}/${PROJECT}-keypair.pem"

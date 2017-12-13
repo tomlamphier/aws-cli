@@ -1,0 +1,7 @@
+aws ec2 create-security-group \
+    --group-name ${AWS_CLI_PROJECT_NAME}-sg \
+    --description "security group for ${AWS_CLI_PROJECT_NAME} project" \
+    --vpc-id `cat ${AWS_CLI_WORK_DIR}/vpcid.txt` \
+    --query 'GroupId' \
+    --output text \
+    > ${AWS_CLI_WORK_DIR}/sggroup.txt

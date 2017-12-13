@@ -1,0 +1,14 @@
+# create VPC
+aws ec2 create-vpc \
+    --cli-input-json file://create-vpc.json \
+    --query 'Vpc.VpcId' --output text > ${AWS_CLI_WORK_DIR}/vpcid.txt
+# add name to VPC
+aws ec2 create-tags --resources `cat ${AWS_CLI_WORK_DIR}/vpcid.txt` \
+    --tags Key=Name,Value=${AWS_CLI_PROJECT_NAME}-vpc
+# create a subnet for VPC
+aws ec2 create-subnet \
+    --cidr-block 10.0.1.0/24 \
+    --vpc-id `cat ${AWS_CLI_WORK_DIR}/vpcid.txt` \
+    --query 'Subnet.SubnetId' \
+    --output text \
+    > ${AWS_CLI_WORK_DIR}/create-subnet.out
