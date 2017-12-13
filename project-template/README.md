@@ -1,6 +1,6 @@
 # project-template
 
-The bash scripts in this directory can be used to build and launch a server in the Amazon AWS cloud.  Before running the scripts, you set some default parameters:
+The bash scripts in this directory can be used to build and launch a server in the Amazon AWS cloud.  Before running the scripts, you can set some default parameters:
 
 * AWS_CLI_PROJECT_NAME - the name of your project
 * AWS_CLI_WORK_DIR     - local work directory 
