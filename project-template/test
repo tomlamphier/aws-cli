@@ -1,5 +1,0 @@
-aws ec2 create-internet-gateway 
-#\
-#    --query 'InternetGatewayId' \
-#    --output text
-
