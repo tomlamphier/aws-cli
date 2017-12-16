@@ -1,13 +1,38 @@
-# add-port-to-security-group
-# Get port number from command line and open it for incoming requests
-# in security group
-if [ -z $1 ]; then
-  echo "Usage: add-port-to-security-group <port number>"
-  exit 1
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# add-port-to-security-group - Get port number from command line and 
+#                              open it for incoming requests
+#
+# Usage: add-port-to-security-group [-h] -g sggroup-id -n port-number
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+usage() { echo "Usage: add-port-to-security-group [-h] -g sggroup-id -n port-number";
+         echo "    sggroup-id is the ID of the security group";
+         echo "    port-number is the port to open for incoming traffic";
+         echo "    -h is the help option"; }
+GROUPID=""
+PORTNUM=""
+while getopts g:n:h opt; do
+    case $opt in
+        g) GROUPID=${OPTARG}
+        ;;
+        n) PORTNUM=${OPTARG}
+        ;;
+        h) usage; exit;
+        ;;
+    esac
+done
+if [ -z $GROUPID ]; then
+    echo "error: security group id is required. "
+    exit 1
+fi
+if [ -z $PORTNUM ]; then
+    echo "error: port number is required. "
+    exit 1
 fi
 aws ec2 authorize-security-group-ingress \
-    --group-id `cat ${AWS_CLI_WORK_DIR}/sggroup.txt` \
+    --group-id ${GROUPID} \
     --protocol tcp \
-    --port ${1} \
+    --port ${PORTNUM} \
     --cidr 0.0.0.0/0
+echo "Port ${PORTNUM} added to security group ID ${GROUPID}."
 

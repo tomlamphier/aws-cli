@@ -1,0 +1,54 @@
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# launch-instance - Launch a new Amazon Linux instance in a VPC 
+#
+# Usage: launch-instance [-h] -k key-name -g security-group-id 
+#        -s subnet-id   
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+usage() { echo "Usage: launch-instance [-h] -k key-name -g security-group-id -s subnet-id";
+         echo "    key-name is root access key pair";
+         echo "    security-group-id is the security group to use as a firewall";
+         echo "    subnet-id is the subnet for the VPC we are using for the instance";
+         echo "    -h is the help option"; }
+KEYNAME=""
+SECURITYGROUP=""
+SUBMETID=""
+while getopts k:g:s:h opt; do
+    case $opt in
+        k) KEYNAME=${OPTARG}
+        ;;
+        g) SECURITYGROUP=${OPTARG}
+        ;;
+        s) SUBNETID=${OPTARG}
+        ;;
+        h) usage; exit;
+        ;;
+    esac
+done
+if [ -z $KEYNAME ]; then
+    echo "error: keypair name is required. "
+    exit 1
+fi
+if [ -z $SECURITYGROUP ]; then
+    echo "error: security group is required. "
+    exit 1
+fi
+if [ -z $SUBNETID ]; then
+    echo "error: subnet ID is required. "
+    exit 1
+fi
+INSTANCE=`aws ec2 run-instances \
+    --image-id ami-15e9c770 \
+    --count 1 \
+    --instance-type t2.small \
+    --key-name ${KEYNAME} \
+    --security-group-ids ${SECURITYGROUP} \
+    --subnet-id ${SUBNETID} \
+    --block-device-mappings "[{\"DeviceName\":\"/dev/sdb\", \
+          \"Ebs\":{\"VolumeSize\": 20, \
+          \"DeleteOnTermination\": false}}]" \
+    --query 'Instances[0].InstanceId' \
+    --output text`
+if [ $? -eq 0 ]; then
+    echo "Instance ${INSTANCE} successfully launched."
+fi 

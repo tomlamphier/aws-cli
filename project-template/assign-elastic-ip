@@ -1,0 +1,36 @@
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# assign-elastic-ip - assign an elastic IP address to an instance
+#
+# Usage: assign-elastic-ip [-h] -e elastic-id -i instance-id
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+usage() { echo "Usage: assign-elastic-ip [-h] -e elastic-id -i instance-id";
+         echo "    elastic-id is AWS ID of an existing elastic IP"; 
+         echo "    instance-id is AWS ID of an instance"; }
+#
+ELASTICIP=""
+INSTANCEID=""
+while getopts e:i:h opt; do
+    case $opt in
+        e) ELASTICIP=${OPTARG}
+        ;;
+        i) INSTANCEID=${OPTARG}
+        ;;
+        h) usage; exit;
+        ;;
+    esac
+done
+if [ -z $ELASTICIP ]; then
+    echo "error: elastic IP ID is required. "
+    exit 1
+fi
+if [ -z $INSTANCEID ]; then
+    echo "error: instance ID is required. "
+    exit 1
+fi
+aws ec2 associate-address \
+    --instance-id ${INSTANCEID} \
+    --allocation-id ${ELASTICIP}
+if [ $? -eq 0 ]; then
+    echo "Elastic IP assigned"
+fi

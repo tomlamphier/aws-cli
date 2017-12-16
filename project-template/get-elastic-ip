@@ -1,8 +1,20 @@
-# get a new elastic IP address
-aws ec2 allocate-address --domain vpc \
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# get-elastic-ip - get a new elastic IP address
+#
+# Usage: get-elastic-ip [-h]
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+usage() { echo "Usage: get-elastic-ip [-h]";
+         echo "    -h is the help option"; }
+#
+while getopts h opt; do
+    case $opt in
+        h) usage; exit;
+        ;;
+    esac
+done
+IPDATA=`aws ec2 allocate-address --domain vpc \
     --query '[PublicIp, AllocationId]' \
-    --output text \
-    > ${AWS_CLI_WORK_DIR}/allocate-address.txt
-# query pulls two fields from output JSON, IP and allocation ID
-NEW_IP=`awk '{print $1}' ${AWS_CLI_WORK_DIR}/allocate-address.txt`
-echo "allocated new elastic IP address ${NEW_IP}"
+    --output text`
+ARR=(${IPDATA})
+echo "New IP Address ${ARR[0]} created, ID is ${ARR[1]}." 

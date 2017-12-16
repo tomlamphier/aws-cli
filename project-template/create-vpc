@@ -1,14 +1,53 @@
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# create-vpc - create a virtual private cloud network, add a subnet,
+#              add an internet gateway, add route for gateway
+#
+# Usage: create-vpc [-h] [-p project-name] 
+#
+# Default: project-name = env variable AWS_CLI_PROJECT_NAME
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+usage() { echo "Usage: create-vpc [-p project-name]";
+         echo "    project-name defaults to the env variable AWS_CLI_PROJECT_NAME"; 
+         echo "    -h is help option"; }
+PROJECT=${AWS_CLI_PROJECT_NAME}
+while getopts p:h opt; do
+    case $opt in
+        p) PROJECT=${OPTARG}
+        ;;
+        h) usage; exit;
+        ;;
+    esac
+done
 # create VPC
-aws ec2 create-vpc \
+VPCID=`aws ec2 create-vpc \
     --cli-input-json file://create-vpc.json \
-    --query 'Vpc.VpcId' --output text > ${AWS_CLI_WORK_DIR}/vpcid.txt
+    --query 'Vpc.VpcId' --output text`
 # add name to VPC
-aws ec2 create-tags --resources `cat ${AWS_CLI_WORK_DIR}/vpcid.txt` \
-    --tags Key=Name,Value=${AWS_CLI_PROJECT_NAME}-vpc
+aws ec2 create-tags --resources ${VPCID} \
+    --tags Key=Name,Value=${PROJECT}-vpc
 # create a subnet for VPC
-aws ec2 create-subnet \
+SUBNETID=`aws ec2 create-subnet \
     --cidr-block 10.0.1.0/24 \
-    --vpc-id `cat ${AWS_CLI_WORK_DIR}/vpcid.txt` \
+    --vpc-id ${VPCID} \
     --query 'Subnet.SubnetId' \
-    --output text \
-    > ${AWS_CLI_WORK_DIR}/create-subnet.out
+    --output text`
+#
+# request a new internet gateway and attach it to the VPC
+GATEWAY=`aws ec2 create-internet-gateway \
+    --query 'InternetGateway.InternetGatewayId' \
+    --output text`
+aws ec2 attach-internet-gateway \
+    --internet-gateway-id ${GATEWAY} \
+    --vpc-id ${VPCID}
+# what is my route table ID for this VPC?
+ROUTETAB=`aws ec2 describe-route-tables \
+    --query "RouteTables[?VpcId=='${VPCID}'].RouteTableId" \
+    --output text`
+# add route to gateway
+aws ec2 create-route --route-table-id ${ROUTETAB} \
+    --destination-cidr-block 0.0.0.0/0 \
+    --gateway-id ${GATEWAY}
+#
+echo "VPC created with ID ${VPCID}."
+echo "Subnet created with ID ${SUBNETID}" 

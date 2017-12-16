@@ -1,0 +1,31 @@
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# connect-to-instance - SSH to a running instance 
+#
+# Usage: connect-to-instance [-h] -k key-file -d domain-name 
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+usage() { echo "Usage: connect-to-instance [-h] -k key-file -d domain-name";
+         echo "    key-file is file containing root access private key";
+         echo "    domain-name is domain associated with the instance's IP or the IP itself";
+         echo "    -h is the help option"; }
+KEYFILE=""
+DOMAIN=""
+while getopts k:d:h opt; do
+    case $opt in
+        k) KEYFILE=${OPTARG}
+        ;;
+        d) DOMAIN=${OPTARG}
+        ;;
+        h) usage; exit;
+        ;;
+    esac
+done
+if [ ! -f $KEYFILE ]; then
+    echo "error: private key file is required. "
+    exit 1
+fi
+if [ -z $DOMAIN ]; then
+    echo "error: domain name (or IP address) is required. "
+    exit 1
+fi
+ssh -i ${KEYFILE} ec2-user@${DOMAIN}

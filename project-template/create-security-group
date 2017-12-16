@@ -1,7 +1,40 @@
-aws ec2 create-security-group \
-    --group-name ${AWS_CLI_PROJECT_NAME}-sg \
-    --description "security group for ${AWS_CLI_PROJECT_NAME} project" \
-    --vpc-id `cat ${AWS_CLI_WORK_DIR}/vpcid.txt` \
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# create-security-group - create a security group
+#
+# Usage: create-security-group [-h] -v vpc-id [-p project-name]  
+#
+# Default: project-name = env variable AWS_CLI_PROJECT_NAME
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+usage() { echo "Usage: create-security-group [-h] -v vpc-id [-p project-name]";
+         echo "    vpc-id is the VPC where the security group will belong"; 
+         echo "    project-name defaults to the env variable AWS_CLI_PROJECT_NAME"; 
+         echo "    -h is the help option"; }
+PROJECT=${AWS_CLI_PROJECT_NAME}
+VPCID=""
+while getopts v:p:h opt; do
+    case $opt in
+        v) VPCID=${OPTARG}
+        ;;
+        p) PROJECT=${OPTARG}
+        ;;
+        h) usage; exit;
+        ;;
+    esac
+done
+if [ -z $PROJECT ]; then
+    echo "error: project-name must be non-blank. "
+    exit 1
+fi
+if [ -z $VPCID ]; then
+    echo "error: vpc-id is required. "
+    exit 1
+fi
+GROUPID=`aws ec2 create-security-group \
+    --group-name ${PROJECT}-sg \
+    --description "security group for ${PROJECT} project" \
+    --vpc-id ${VPCID} \
     --query 'GroupId' \
-    --output text \
-    > ${AWS_CLI_WORK_DIR}/sggroup.txt
+    --output text`
+
+echo "Security group ${PROJECT}-sg created with ID ${GROUPID}" 
