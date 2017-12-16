@@ -27,3 +27,5 @@ Example:
 
 
 Note: All the scripts have a -h help option to get usage information.  
+## Related Article
+This [article](http://datasciex.com/?p=205) is an introduction to the AWS CLI.
